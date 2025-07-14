@@ -1,0 +1,37 @@
+units       metal
+boundary    p p p
+atom_style  atomic
+
+read_data mini.data
+
+mass 1      69.723
+mass 2      63.546
+mass 3      107.8682
+mass 4      78.971
+
+pair_style pace product
+pair_coeff * * /nfshome/karanikv/LAMMPS_Test/Excess_Energy_Volume/Potential_26/MonteCarlo_simulation/HOREKA_GPU/output_potential.yace Ga Cu Ag Se
+
+##################################
+#Parameters#        
+variable    timeStepLength equal    0.001    #In ps
+##################################
+
+# Calculating new Variables
+timestep    ${timeStepLength}
+
+# Perform energy minimization
+minimize 0 1e-10 100000 100000
+write_data optimize0.data
+
+#check https://docs.lammps.org/fix_box_relax.html for info
+fix 1 all box/relax z 0.0 vmax 0.001
+#fix 1 all box/relax iso 0.0 vmax 0.001
+#fix 1 all box/relax aniso 0.0 vmax 0.001
+
+
+# Perform energy minimization
+minimize 0 1e-10 100000 100000
+unfix 1
+
+write_data optimize1.data
